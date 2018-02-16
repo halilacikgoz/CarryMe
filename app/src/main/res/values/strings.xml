@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CarryMe</string>
+    <string name="x">X</string>
+    <string name="y">Y</string>
+    <string name="departure">Departure:</string>
+    <string name="comma">,</string>
+    <string name="arrival">Arrival:</string>
+    <string name="Kg">Kg</string>
+    <string name="packetKgText">Packet Kg:</string>
+    <string name="showOptions">SHOW OPTIONS</string>
+</resources>
