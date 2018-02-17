@@ -93,6 +93,15 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
             }
         });
 
+        Button button2 = (Button) findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+        Intent intent = new Intent(RequestPage.this,MyPackets.class);
+        startActivity(intent);
+            }
+        });
+
         final DatePickerr datePickerr= new DatePickerr(this);
         Button startDate = (Button) findViewById(R.id.startDate);
         startDate.setOnClickListener(new View.OnClickListener() {

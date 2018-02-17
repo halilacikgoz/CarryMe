@@ -16,4 +16,6 @@
     <string name="end_date_range">Date Range End</string>
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
+    <string name="title_activity_packet_location_page">Map</string>
+    <string name="my_packets">My Packets</string>
 </resources>
