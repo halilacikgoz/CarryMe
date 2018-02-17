@@ -1,7 +1,9 @@
 package com.patos.carryme;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,10 +22,13 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.patos.carryme.datePicker.DatePickerr;
 import com.patos.carryme.objects.Car;
 import com.patos.carryme.remote.Getter;
+import com.patos.carryme.remote.Server;
 import com.patos.carryme.test.Preparer;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +53,7 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_page);
         Preparer.prepare();
+        Server.init(this);
         departureLocation = (TextView) findViewById(R.id.departureLocation);
         arrivalLocation = (TextView) findViewById(R.id.arrivalLocation);
 
@@ -93,12 +99,13 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
             }
         });
 
-        Button button2 = (Button) findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
+        final Activity currentActivity= this;
+        Button myPackets = (Button) findViewById(R.id.myPackets);
+        myPackets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-        Intent intent = new Intent(RequestPage.this,MyPackets.class);
-        startActivity(intent);
+                Getter.getPackets(currentActivity,  Settings.Secure.getString(currentActivity.getContentResolver(),
+                        Settings.Secure.ANDROID_ID));
             }
         });
 
@@ -119,8 +126,8 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
             public void onClick(View view) {
                 if(tempDate==null){
                     AlertDialog.Builder builder = new AlertDialog.Builder(RequestPage.this);
-                    builder.setMessage("Please Enter Start Date of Range !")
-                            .setTitle("Missing Values")
+                    builder.setMessage(getResources().getString(R.string.requestPage_Date1_required))
+                            .setTitle(getResources().getString(R.string.missing_values))
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -164,8 +171,8 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
                 endDateText.setText(date);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(RequestPage.this);
-                builder.setMessage("Başlangıç tarihiyle uyumlu bir tarih gir !")
-                        .setTitle("Missing Values")
+                builder.setMessage(getResources().getString(R.string.endDate_compatible))
+                        .setTitle(getResources().getString(R.string.missing_values))
                         .setPositiveButton(android.R.string.ok, null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
@@ -181,7 +188,7 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, RequestPage.this);
                 if(isDeparture){
-                    String toastMsg = String.format("Departure: %s", place.getAddress());
+                    String toastMsg = String.format(getResources().getString(R.string.requestPage_departure)+"%s", place.getAddress());
 
                     departureLocation.setText(place.getAddress().toString());
                     departureLatitude=place.getLatLng().latitude;
@@ -191,7 +198,7 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
                     Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
 
                 } else {
-                    String toastMsg = String.format("Arrival: %s", place.getAddress());
+                    String toastMsg = String.format(getResources().getString(R.string.requestPage_arrival)+"%s", place.getAddress());
 
                     arrivalLocation.setText(place.getAddress().toString());
                     arrivalLatitude = place.getLatLng().latitude;
@@ -214,28 +221,41 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
 
                 EditText packetKgText = (EditText) findViewById(R.id.packetKg);
 
-                if (departureLocation.getText().toString().equals("Give an Address") ||
-                        arrivalLocation.getText().toString().equals("Give an Address") ||
+                if (departureLocation.getText().toString().equals(getResources().getString(R.string.give_an_address)) ||
+                        arrivalLocation.getText().toString().equals(getResources().getString(R.string.give_an_address)) ||
                         packetKgText.getText().toString().equals("") ||
                         startDateString.equals("") ||
                         endDateString.equals("")) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(RequestPage.this);
-                    builder.setMessage("Enter the values !")
-                            .setTitle("Missing Values")
-                            .setPositiveButton(android.R.string.ok, null);
+                    builder.setMessage(getResources().getString(R.string.enter_the_values))
+                            .setTitle(getResources().getString(R.string.missing_values))
+                            .setPositiveButton(getResources().getString(android.R.string.ok), null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
                 double packetKg = Double.parseDouble(packetKgText.getText().toString());
 
-                List<Car> availableCars = Getter.getAvailableCars(departureLatitude, departureLongitude, arrivalLatitude, arrivalLongitude, packetKg);
+                    try {
+                        Getter.getAvailableCars(
+                                new SimpleDateFormat("yyyy-MM-dd").parse(startDateString),
+                                new SimpleDateFormat("yyyy-MM-dd").parse(endDateString),
+                                packetKg,
+                                departureLongitude,
+                                departureLatitude,
+                                arrivalLongitude,
+                                arrivalLatitude);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-                AvailableCars.availableCars = availableCars;
-                Log.v("PATOS", availableCars.size() + "");
-                Intent availableCarPage = new Intent(RequestPage.this, AvailableCars.class);
-                availableCarPage.putExtra("kg", packetKg);
-                startActivity(availableCarPage);
+//                List<Car> availableCars = Getter.getAvailableCars(departureLatitude, departureLongitude, arrivalLatitude, arrivalLongitude, packetKg);
+//
+//                AvailableCars.availableCars = availableCars;
+//                Log.v("PATOS", availableCars.size() + "");
+//                Intent availableCarPage = new Intent(RequestPage.this, AvailableCars.class);
+//                availableCarPage.putExtra("kg", packetKg);
+//                startActivity(availableCarPage);
             }
             }
         });

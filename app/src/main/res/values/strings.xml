@@ -18,4 +18,17 @@
     <string name="end_date">End Date</string>
     <string name="title_activity_packet_location_page">Map</string>
     <string name="my_packets">My Packets</string>
+    <string name="requestPage_Date1_required">Please Enter Start Date of Range !</string>
+    <string name="missing_values">Missing Values</string>
+    <string name="endDate_compatible">Please Enter a Date After The Start Date</string>
+    <string name="give_an_address">Give an Address</string>
+    <string name="enter_the_values">Please Enter The All Values !</string>
+    <string name="requestPage_departure">Departure: </string>
+    <string name="requestPage_arrival">Arrival: </string>
+    <string name="driver">Driver: </string>
+    <string name="departure_distance">Departure Distance: </string>
+    <string name="arrival_distance">Arrival Distance: </string>
+    <string name="available_weight">Available Weight: </string>
+    <string name="are_you_sure">Do you want to send your packet with this driver?</string>
+
 </resources>

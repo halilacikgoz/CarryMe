@@ -1,6 +1,8 @@
 package com.patos.carryme;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.patos.carryme.objects.Car;
+import com.patos.carryme.remote.Setter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -32,9 +35,10 @@ public class AvailableCars extends AppCompatActivity {
         availableCarsString.clear();
         for(Car car: availableCars){
 
-            availableCarsString.add("Driver: "+car.get_drivername()+"\nDeparture Distance: "
-                    +df.format(car.d_distance)+"\nArrival Distance: "+df.format(car.s_distance)+"\nAvailable weight: "
-                    +(car.get_weight_capacity()-car.get_c_weight())
+            availableCarsString.add(getResources().getString(R.string.driver)+car.get_drivername()+"\n"+
+                    getResources().getString(R.string.departure_distance) +df.format(car.d_distance)+"\n"+
+                    getResources().getString(R.string.arrival_distance)+ df.format(car.s_distance)+"\n"+
+                    getResources().getString(R.string.available_weight) +(car.get_weight_capacity()-car.get_c_weight())
             );
         }
 
@@ -43,6 +47,7 @@ public class AvailableCars extends AppCompatActivity {
                 (this, android.R.layout.simple_list_item_1, android.R.id.text1,availableCarsString );
         listView.setAdapter(arrayAdapter);
 
+        final Activity currentActivity = this;
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
          @Override
          public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
@@ -60,14 +65,10 @@ public class AvailableCars extends AppCompatActivity {
                  @Override
                  public void onClick(View v) {
                      finish();
-                     if(availableCars.get(i).addPacket(1,kg))
-                         Toast.makeText(AvailableCars.this, "Added your packet!",
-                                 Toast.LENGTH_SHORT).show();
-                     else {
-                         Toast.makeText(AvailableCars.this, "Your packet can not be added!",
-                                 Toast.LENGTH_SHORT).show();
-
-                     }
+                     Setter.addPacketToCar(currentActivity, availableCars.get(i).get_id(),
+                             Settings.Secure.getString(currentActivity.getContentResolver(),
+                                     Settings.Secure.ANDROID_ID),
+                                        kg);
 
                  }
              });
@@ -77,7 +78,7 @@ public class AvailableCars extends AppCompatActivity {
                      dialog.dismiss();
                  }
              });
-             dialog.setMessage("Do you want to send your packet with this driver?");
+             dialog.setMessage(getResources().getString(R.string.are_you_sure));
              dialog.setCancelable(false);
              dialog.show();
 

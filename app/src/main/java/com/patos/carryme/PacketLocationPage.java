@@ -9,8 +9,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.patos.carryme.objects.Car;
 import com.patos.carryme.objects.Packet;
 import com.patos.carryme.test.Data;
 
@@ -18,16 +21,14 @@ public class PacketLocationPage extends FragmentActivity implements OnMapReadyCa
 
     private GoogleMap mMap;
      int packetIndex;
-    Packet currentPacket;
+    Car currentCar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_packet_location_page);
 
 
-        Intent intent = getIntent();
-        packetIndex = intent.getIntExtra("packetIndex",0);
-        currentPacket = Data.allPackets.get(packetIndex);
+        currentCar = Data.carWillBeDisplayed;
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -49,9 +50,11 @@ public class PacketLocationPage extends FragmentActivity implements OnMapReadyCa
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng packetLocation = new LatLng(currentPacket.car.get_s_latitude(),currentPacket.car.get_s_longitude() );
-        mMap.addMarker(new MarkerOptions().position(packetLocation).title(currentPacket.car.get_drivername()));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(packetLocation,15));
+        LatLng packetLocation = new LatLng(currentCar.get_s_latitude(),currentCar.get_s_longitude() );
+        MarkerOptions marker = new MarkerOptions().position(packetLocation).icon(BitmapDescriptorFactory.
+                fromResource(R.drawable.ferrari)).title(currentCar.get_drivername());
+        mMap.addMarker(marker);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(packetLocation,10));
     }
 
 //    public class MapsMarkerActivity extends AppCompatActivity

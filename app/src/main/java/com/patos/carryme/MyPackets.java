@@ -4,6 +4,7 @@ package com.patos.carryme;
  * Created by Halil on 17.02.2018.
  */
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.patos.carryme.objects.Car;
 import com.patos.carryme.objects.Packet;
+import com.patos.carryme.remote.Getter;
 import com.patos.carryme.test.Data;
 
 import java.util.ArrayList;
@@ -34,29 +36,15 @@ public class MyPackets extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_packets);
 
-        List<Packet> testPackets = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-            Packet p = new Packet();
-            p.ID = "CARID+" + i;
-            p.weight = new Random().nextDouble()*10;
-            p.car = new Car(1);
-            p.car.set_departure(new Date());
-            p.car.set_drivername("driver-" + i);
-            p.car.set_s_latitude(41.008238);
-            p.car.set_s_longitude(28.978359);
-            testPackets.add(p);
-        }
-        Data.allPackets=testPackets;
-
+        myPacketsString.clear();
         //myPacketsString.clear();
         for(Packet p: Data.allPackets){
-
             myPacketsString.add("Packet Weight: "+p.weight+
-                    "\nCar Driver: "+ p.car.get_drivername()+
-                    "\nCar Departure Date: "+p.car.get_departure());
+                    "\nPacket ID: "+ p.ID+
+                    "\nCar ID: "+p.car.get_id());
         }
 
-
+        final Activity currentActivity = this;
         ListView listView = (ListView) findViewById(R.id.myPackets);
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>
                 (this, android.R.layout.simple_list_item_1, android.R.id.text1,myPacketsString );
@@ -66,9 +54,7 @@ public class MyPackets extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-               Intent intent = new Intent(MyPackets.this,PacketLocationPage.class);
-                intent.putExtra("packetIndex",i);
-                startActivity(intent);
+                Getter.getCar(currentActivity, Data.allPackets.get(i).car.get_id());
             }
         });
     }
