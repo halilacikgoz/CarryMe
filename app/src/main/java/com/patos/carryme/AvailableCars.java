@@ -1,12 +1,14 @@
 package com.patos.carryme;
 
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -43,15 +45,42 @@ public class AvailableCars extends AppCompatActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
          @Override
-         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-             if(availableCars.get(i).addPacket(1,kg))
-                Toast.makeText(AvailableCars.this, "Added your packet!",
-                     Toast.LENGTH_SHORT).show();
-             else {
-                 Toast.makeText(AvailableCars.this, "Your packet can not be added!",
-                         Toast.LENGTH_SHORT).show();
+         public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-             }
+             AlertDialog.Builder mBuilder = new AlertDialog.Builder(AvailableCars.this);
+             View mView = getLayoutInflater().inflate(R.layout.yesno, null);
+             Button yes = (Button) mView.findViewById(R.id.yes);
+             Button no = (Button) mView.findViewById(R.id.no);
+
+             mBuilder.setView(mView);
+             final AlertDialog dialog = mBuilder.create();
+
+
+             yes.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     finish();
+                     if(availableCars.get(i).addPacket(1,kg))
+                         Toast.makeText(AvailableCars.this, "Added your packet!",
+                                 Toast.LENGTH_SHORT).show();
+                     else {
+                         Toast.makeText(AvailableCars.this, "Your packet can not be added!",
+                                 Toast.LENGTH_SHORT).show();
+
+                     }
+
+                 }
+             });
+             no.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     dialog.dismiss();
+                 }
+             });
+             dialog.setMessage("Do you want to send your packet with this driver?");
+             dialog.setCancelable(false);
+             dialog.show();
+
          }
      });
 

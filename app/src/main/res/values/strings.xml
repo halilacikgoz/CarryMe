@@ -2,10 +2,15 @@
     <string name="app_name">CarryMe</string>
     <string name="x">X</string>
     <string name="y">Y</string>
-    <string name="departure">Departure:</string>
+    <string name="departure">Departure</string>
     <string name="comma">,</string>
-    <string name="arrival">Arrival:</string>
+    <string name="arrival">Arrival</string>
     <string name="Kg">Kg</string>
     <string name="packetKgText">Packet Kg:</string>
     <string name="showOptions">SHOW OPTIONS</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="google_place_api">AIzaSyDUoH9wr838_lX_6w6KLt0s8RI2HUtIEa8</string>
+    <string name="addressDeparture">Address</string>
+    <string name="addressArrival">Address</string>
 </resources>
