@@ -11,6 +11,9 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="google_place_api">AIzaSyDUoH9wr838_lX_6w6KLt0s8RI2HUtIEa8</string>
-    <string name="addressDeparture">Address</string>
-    <string name="addressArrival">Address</string>
+    <string name="address">Give an Address</string>
+    <string name="start_date_range">Date Range Start</string>
+    <string name="end_date_range">Date Range End</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
 </resources>

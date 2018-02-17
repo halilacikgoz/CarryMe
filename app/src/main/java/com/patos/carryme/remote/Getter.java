@@ -51,6 +51,12 @@ public class Getter {
 
         return availableCars;
     }
+    public static List<Car> getAvailableCars(Date startDate, Date endDate, double kg){
+
+
+
+        return new ArrayList<>();
+    }
 
 
 }
