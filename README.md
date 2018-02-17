@@ -4,12 +4,12 @@
 
 <h2>Technical Parts</h2>
 <h3>Android Front End</h3>
-- Invalid Input Checked
-- Map Integrated
+<p>- Invalid Input Checked</p>
+<p>- Map Integrated</p>
 
 <h3>Android Back End</h3>
-- Server connection established
-- Request & Response data parsed
+<p>- Server connection established</p>
+<p>- Request & Response data parsed</p>
 
 <h2>Team</h2>
 <b>Patos Team</b><br/>
