@@ -43,7 +43,7 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
     String endDateString;
     Date tempDate=null;
 
-
+public static String userID="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +51,8 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
         Server.init(this);
         departureLocation = (TextView) findViewById(R.id.departureLocation);
         arrivalLocation = (TextView) findViewById(R.id.arrivalLocation);
-
+        userID=Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
         setListeners();
 
         Button departure = (Button) findViewById(R.id.departure);
@@ -99,8 +100,7 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
         myPackets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Getter.getPackets(currentActivity,  Settings.Secure.getString(currentActivity.getContentResolver(),
-                        Settings.Secure.ANDROID_ID));
+                Getter.getPackets(currentActivity, userID );
             }
         });
 

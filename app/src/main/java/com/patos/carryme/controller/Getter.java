@@ -24,8 +24,8 @@ public class Getter {
         Server.getPackets(activity, userID);
     }
 
-    public static void getCar(Activity activity, String carID){
-        Server.getCar(activity, carID);
+    public static void getCar(Activity activity, String carID, String packetID){
+        Server.getCar(activity, carID, packetID);
     }
 
 

@@ -13,6 +13,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
 import com.patos.carryme.view.AvailableCars;
 import com.patos.carryme.view.MyPackets;
 import com.patos.carryme.view.PacketLocationPage;
@@ -46,8 +47,8 @@ public class Server {
     }
 
     static void getAvailableCars(Date startDate, Date endDate,
-                                      double kg, double deperatureLat, double deperatureLon,
-                                      double arrivalLat, double arrivalLon){
+                                      double kg, double deperatureLon, double deperatureLat,
+                                      double arrivalLon, double arrivalLat){
         getCars(startDate, endDate, kg, deperatureLat, deperatureLon,arrivalLat,arrivalLon);
     }
 
@@ -103,11 +104,13 @@ public class Server {
         queue.add(postRequest);
     }
 
-    static void addPacketToCar(Activity activity, String carID, String userID, double packageKG){
-        Server.updateCarPacket(activity, carID, userID, packageKG);
+    static void addPacketToCar(Activity activity, String carID, String userID, double packageKG,
+                               double slatitude, double slongitude,
+                               double dlatitude, double dlongitude){
+        Server.updateCarPacket(activity, carID, userID, packageKG, slatitude, slongitude, dlatitude, dlongitude);
     }
 
-    static void getCar(final Activity activity, final String carID){
+    static void getCar(final Activity activity, final String carID, final String packetID){
         RequestQueue queue = Volley.newRequestQueue(_context);
         String url = "https://protected-dusk-58376.herokuapp.com/getcar?id=" + carID;
         StringRequest postRequest = new StringRequest(Request.Method.GET, url,
@@ -116,7 +119,7 @@ public class Server {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            parseCarData(activity, response);
+                            parseCarData(activity, response, packetID);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (ParseException e) {
@@ -155,11 +158,11 @@ public class Server {
             }
 
         });
-        Log.v("PATOS_LOG", "Request Url Body: " + new String(postRequest.getBodyContentType()));
+        Log.v("PATOS_LOG", "/getcar request sent.");
 
         queue.add(postRequest);
     }
-    private static void parseCarData(Activity activity, String JSON) throws JSONException, ParseException {
+    private static void parseCarData(Activity activity, String JSON, String packetID) throws JSONException, ParseException {
         List<Packet> returnList = new ArrayList<>();
         Log.v("PATOS_LOG", "Returned JSON: " + JSON);
 
@@ -178,9 +181,24 @@ public class Server {
         car.set_c_weight(carData.getDouble("currentKg"));
         car.set_drivername(carData.getString("driver"));
 
-        Data.carWillBeDisplayed=car;
+        JSONArray packets = carData.getJSONArray("packetlist");
+        for(int i = 0; i < packets.length(); i++){
+            JSONArray jpacket = packets.getJSONArray(i);
+            car.addPacket(
+                    jpacket.getString(0),
+                    jpacket.getDouble(1),
+                    jpacket.getDouble(2),
+                    jpacket.getDouble(3),
+                    jpacket.getDouble(4),
+                    jpacket.getDouble(5)
+            );
+            Log.v("Patos_log",car.getPacketList().get(i).ID+"");
+        }
 
+        Data.carWillBeDisplayed=car;
+        //Log.v("Patos_log",car.getPacketList().get(0).ID+"");
         Intent intent = new Intent(activity,PacketLocationPage.class);
+        intent.putExtra("packetID", packetID);
         activity.startActivity(intent);
 
     }
@@ -208,7 +226,10 @@ public class Server {
 
     }
 
-    private static void updateCarPacket(final Activity activity, final String carID, final String userID, final double packageKG){
+    private static void updateCarPacket(final Activity activity, final String carID,
+                                        final String userID, final double packageKG,
+                                        final double slatitude, final double slongitude,
+                                        final double dlatitude, final double dlongitude){
         RequestQueue queue = Volley.newRequestQueue(_context);
         String url = "https://protected-dusk-58376.herokuapp.com/addPacket";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
@@ -240,6 +261,10 @@ public class Server {
                 params.put("carID", carID); //Add the data you'd like to send to the foter.com.httppost.server.
                 params.put("userID", userID); //Add the data you'd like to send to the foter.com.httppost.server.
                 params.put("packageKG", packageKG + "");
+                params.put("slatitude", slatitude + "");
+                params.put("slongitude", slongitude + "");
+                params.put("dlatitude", dlatitude + "");
+                params.put("dlongitude", dlongitude + "");
                 Log.v("PATOS_LOG", "CAR: " + carID + ", USER: " + userID + ", PacketKG: " + packageKG);
                 return params;
             }
@@ -305,7 +330,6 @@ public class Server {
             Log.v("PATOS_LOG",totalDistances.size()+"");
 
             for(Map.Entry<Double, String> carDetails : totalDistances.entrySet()){
-
                 Car car = carsDictionary.get(carDetails.getValue());
                 if(car.get_weight_capacity() - car.get_c_weight() >= kg)
                     returnList.add(car);
@@ -321,6 +345,10 @@ public class Server {
         Log.v("PATOS_LOG", availableCars.size() + "");
         Intent availableCarPage = new Intent(_context, AvailableCars.class);
         availableCarPage.putExtra("kg", kg);
+        availableCarPage.putExtra("slatitude", deperatureLat);
+        availableCarPage.putExtra("slongitude", deperatureLon);
+        availableCarPage.putExtra("dlatitude", arrivalLat);
+        availableCarPage.putExtra("dlongitude", arrivalLon);
         _context.startActivity(availableCarPage);
     }
 

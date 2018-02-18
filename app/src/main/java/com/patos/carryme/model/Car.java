@@ -1,5 +1,7 @@
 package com.patos.carryme.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -11,7 +13,7 @@ public class Car {
 	private Date _departure;
 	private double _weight_capacity;
 	private double _c_weight;
-	private ArrayList<double []> packetList = new ArrayList();
+	private ArrayList<Packet> packetList = new ArrayList();
 	public double s_distance,d_distance;
 	
 	
@@ -31,16 +33,15 @@ public class Car {
 	public Car(String _id) {
 		this._id = _id;
 	}
-	public boolean addPacket(int id,double weight) {
-		
-		if (this._c_weight+weight <= this._weight_capacity) {
-			this._c_weight+=weight;
-			//double[] nums = new double[] { id, weight,};
-			//packetList.add(nums);
-			return true;
-		}	
-		
-		return false;
+	public void addPacket(String id,double weight, double slatitude, double slongitude, double dlatitude, double dlongitude) {
+		Packet p = new Packet();
+		p.ID = id;
+		p.weight = weight;
+		p.arrival = new LatLng(dlatitude, dlongitude);
+		p.deperature = new LatLng(slatitude, slongitude);
+
+		packetList.add(p);
+
 	}
 	public String get_id() {
 		return _id;
@@ -96,13 +97,10 @@ public class Car {
 	public void set_c_weight(double _c_weight) {
 		this._c_weight = _c_weight;
 	}
-	public ArrayList<double[]> getPacketList() {
+	public ArrayList<Packet> getPacketList() {
 		return packetList;
 	}
-	public void setPacketList(ArrayList<double[]> packetList) {
-		this.packetList = packetList;
-	}
-	 public String toString(){
+	public String toString(){
 		  return "id: "+this._id +" , name: "+ this._drivername+" ,weig: "+this.get_weight_capacity()
 				  
 		  +" ,s_lati: "+this.get_s_latitude()

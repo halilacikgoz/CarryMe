@@ -30,5 +30,6 @@
     <string name="arrival_distance">Arrival Distance: </string>
     <string name="available_weight">Available Weight: </string>
     <string name="are_you_sure">Do you want to send your packet with this driver?</string>
+    <string name="price">Price: </string>
 
 </resources>

@@ -48,7 +48,7 @@ public class MyPackets extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                Getter.getCar(currentActivity, Data.allPackets.get(i).car.get_id());
+                Getter.getCar(currentActivity, Data.allPackets.get(i).car.get_id(),Data.allPackets.get(i).ID);
             }
         });
     }

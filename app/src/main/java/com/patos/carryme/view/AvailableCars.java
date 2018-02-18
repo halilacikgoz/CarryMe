@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 
 import com.patos.carryme.R;
 import com.patos.carryme.model.Car;
+import com.patos.carryme.model.singletons.Calculator;
 import com.patos.carryme.controller.Setter;
 
 import java.text.DecimalFormat;
@@ -29,14 +31,21 @@ public class AvailableCars extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_available_cars);
         DecimalFormat df = new DecimalFormat(".###");
+
         Intent newData = getIntent();
         final double kg = newData.getDoubleExtra("kg",0);
+        final double slatitude = newData.getDoubleExtra("slatitude",0);
+        final double slongitude = newData.getDoubleExtra("slongitude",0);
+        final double dlatitude = newData.getDoubleExtra("dlatitude",0);
+        final double dlongitude = newData.getDoubleExtra("dlongitude",0);
+
         availableCarsString.clear();
         for(Car car: availableCars){
 
             availableCarsString.add(getResources().getString(R.string.driver)+car.get_drivername()+"\n"+
                     getResources().getString(R.string.departure_distance) +df.format(car.d_distance)+"\n"+
                     getResources().getString(R.string.arrival_distance)+ df.format(car.s_distance)+"\n"+
+                    getResources().getString(R.string.price)+ new DecimalFormat(".##").format(calculatePrice(car))+"₺\n"+
                     getResources().getString(R.string.available_weight) +(car.get_weight_capacity()-car.get_c_weight())
             );
         }
@@ -60,6 +69,7 @@ public class AvailableCars extends AppCompatActivity {
              final AlertDialog dialog = mBuilder.create();
 
 
+
              yes.setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View v) {
@@ -67,7 +77,7 @@ public class AvailableCars extends AppCompatActivity {
                      Setter.addPacketToCar(currentActivity, availableCars.get(i).get_id(),
                              Settings.Secure.getString(currentActivity.getContentResolver(),
                                      Settings.Secure.ANDROID_ID),
-                                        kg);
+                                        kg, slatitude, slongitude, dlatitude, dlongitude);
 
                  }
              });
@@ -85,6 +95,10 @@ public class AvailableCars extends AppCompatActivity {
      });
 
 
+    }
+
+    private double calculatePrice(Car c){
+        return ((c.s_distance + c.d_distance)) / 3 ;
     }
 
 }

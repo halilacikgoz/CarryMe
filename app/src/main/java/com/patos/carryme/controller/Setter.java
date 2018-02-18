@@ -7,7 +7,9 @@ import android.app.Activity;
  */
 
 public class Setter {
-    public static void addPacketToCar(Activity activity, String carID, String userID, double packageKG){
-        Server.addPacketToCar(activity,carID,userID,packageKG);
+    public static void addPacketToCar(Activity activity, String carID, String userID, double packageKG,
+                                      double slatitude, double slongitude,
+                                      double dlatitude, double dlongitude){
+        Server.addPacketToCar(activity,carID,userID,packageKG, slatitude, slongitude, dlatitude, dlongitude);
     }
 }
