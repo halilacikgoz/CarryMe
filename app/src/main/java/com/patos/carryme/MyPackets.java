@@ -5,26 +5,18 @@ package com.patos.carryme;
  */
 
 import android.app.Activity;
-import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import com.patos.carryme.objects.Car;
 import com.patos.carryme.objects.Packet;
 import com.patos.carryme.remote.Getter;
 import com.patos.carryme.test.Data;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class MyPackets extends AppCompatActivity {
 

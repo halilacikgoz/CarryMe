@@ -20,12 +20,9 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.patos.carryme.datePicker.DatePickerr;
-import com.patos.carryme.objects.Car;
 import com.patos.carryme.remote.Getter;
 import com.patos.carryme.remote.Server;
 import com.patos.carryme.test.Preparer;
-
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

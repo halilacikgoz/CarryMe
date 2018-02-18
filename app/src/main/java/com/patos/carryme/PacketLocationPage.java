@@ -1,9 +1,9 @@
 package com.patos.carryme;
 
-import android.content.Intent;
+
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,13 +14,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.patos.carryme.objects.Car;
-import com.patos.carryme.objects.Packet;
 import com.patos.carryme.test.Data;
 
 public class PacketLocationPage extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-     int packetIndex;
     Car currentCar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +46,8 @@ public class PacketLocationPage extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+
 
         // Add a marker in Sydney and move the camera
         LatLng packetLocation = new LatLng(currentCar.get_s_latitude(),currentCar.get_s_longitude() );
