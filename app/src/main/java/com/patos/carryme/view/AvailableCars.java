@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.patos.carryme.R;
 import com.patos.carryme.model.Car;
@@ -73,11 +74,17 @@ public class AvailableCars extends AppCompatActivity {
              yes.setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View v) {
-                     finish();
-                     Setter.addPacketToCar(currentActivity, availableCars.get(i).get_id(),
-                             Settings.Secure.getString(currentActivity.getContentResolver(),
-                                     Settings.Secure.ANDROID_ID),
-                                        kg, slatitude, slongitude, dlatitude, dlongitude);
+                     Car c = availableCars.get(i);
+                     if(RequestPage.currentMoney < calculatePrice(c)){
+                         Toast.makeText(getApplicationContext(), "Your budget is not enough!",Toast.LENGTH_SHORT );
+                     }else{
+                         RequestPage.currentMoney -= calculatePrice(c);
+                         finish();
+                         Setter.addPacketToCar(currentActivity, c.get_id(),
+                                 Settings.Secure.getString(currentActivity.getContentResolver(),
+                                         Settings.Secure.ANDROID_ID),
+                                 kg, slatitude, slongitude, dlatitude, dlongitude);
+                     }
 
                  }
              });
@@ -97,7 +104,7 @@ public class AvailableCars extends AppCompatActivity {
 
     }
 
-    private double calculatePrice(Car c){
+    private static double calculatePrice(Car c){
         return ((c.s_distance + c.d_distance)) / 3 ;
     }
 

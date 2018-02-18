@@ -24,6 +24,7 @@ import com.patos.carryme.datePicker.DatePickerr;
 import com.patos.carryme.controller.Getter;
 import com.patos.carryme.controller.Server;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,7 +43,8 @@ public class RequestPage extends AppCompatActivity implements DatePickerDialog.O
     String startDateString;
     String endDateString;
     Date tempDate=null;
-
+    TextView currentMoneyText;
+public static double currentMoney = 100;
 public static String userID="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,10 @@ public static String userID="";
         Server.init(this);
         departureLocation = (TextView) findViewById(R.id.departureLocation);
         arrivalLocation = (TextView) findViewById(R.id.arrivalLocation);
+        currentMoneyText =(TextView) findViewById(R.id.currentMoney);
+
+        currentMoneyText.setText(getResources().getString(R.string.total_money)+currentMoney+" ₺");
+
         userID=Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         setListeners();
@@ -136,6 +142,10 @@ public static String userID="";
 
 
 
+    }
+    protected void onResume(){
+        super.onResume();
+        currentMoneyText.setText(getResources().getString(R.string.total_money)+new DecimalFormat(".##").format(currentMoney)+" ₺");
     }
 
     @Override

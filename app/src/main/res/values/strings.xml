@@ -31,5 +31,7 @@
     <string name="available_weight">Available Weight: </string>
     <string name="are_you_sure">Do you want to send your packet with this driver?</string>
     <string name="price">Price: </string>
+    <string name="total_money">Total Money:</string>
+    <string name="total_money_TEXT">Total Money</string>
 
 </resources>
