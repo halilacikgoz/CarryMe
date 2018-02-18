@@ -13,11 +13,13 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.patos.carryme.AvailableCars;
+import com.patos.carryme.view.AvailableCars;
+import com.patos.carryme.view.MyPackets;
+import com.patos.carryme.view.PacketLocationPage;
 import com.patos.carryme.model.Car;
+import com.patos.carryme.model.Packet;
 import com.patos.carryme.model.singletons.Calculator;
-import com.patos.carryme.test.Data;
-import com.patos.carryme.test.Properties;
+import com.patos.carryme.model.singletons.Data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +51,161 @@ public class Server {
         getCars(startDate, endDate, kg, deperatureLat, deperatureLon,arrivalLat,arrivalLon);
     }
 
+    static void getPackets(final Activity activity, final String userID){
+        RequestQueue queue = Volley.newRequestQueue(_context);
+        String url = "https://protected-dusk-58376.herokuapp.com/getorders?id=" + userID;
+        StringRequest postRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            parsePacketData(activity, response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        error.printStackTrace();
+                    }
+                }
+        ) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded";
+            }
+        };
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+
+        });
+        Log.v("PATOS_LOG", "Request Url Body: " + new String(postRequest.getBodyContentType()));
+
+        queue.add(postRequest);
+    }
+
     static void addPacketToCar(Activity activity, String carID, String userID, double packageKG){
         Server.updateCarPacket(activity, carID, userID, packageKG);
+    }
+
+    static void getCar(final Activity activity, final String carID){
+        RequestQueue queue = Volley.newRequestQueue(_context);
+        String url = "https://protected-dusk-58376.herokuapp.com/getcar?id=" + carID;
+        StringRequest postRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            parseCarData(activity, response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        ) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded";
+            }
+        };
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+
+        });
+        Log.v("PATOS_LOG", "Request Url Body: " + new String(postRequest.getBodyContentType()));
+
+        queue.add(postRequest);
+    }
+    private static void parseCarData(Activity activity, String JSON) throws JSONException, ParseException {
+        List<Packet> returnList = new ArrayList<>();
+        Log.v("PATOS_LOG", "Returned JSON: " + JSON);
+
+        JSONObject carData = new JSONObject(JSON).getJSONObject("data");
+        Car car = new Car(carData.getString("_id"));
+        car.set_s_longitude(carData.getDouble("departureLong"));
+        car.set_s_latitude(carData.getDouble("departureLat"));
+        car.set_d_longitude(carData.getDouble("arrivalLong"));
+        car.set_d_latitude(carData.getDouble("arrivalLat"));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        car.set_departure(sdf.parse(carData.getString("departureDate")));
+
+        car.set_weight_capacity(carData.getDouble("maxKg"));
+        car.set_c_weight(carData.getDouble("currentKg"));
+        car.set_drivername(carData.getString("driver"));
+
+        Data.carWillBeDisplayed=car;
+
+        Intent intent = new Intent(activity,PacketLocationPage.class);
+        activity.startActivity(intent);
+
+    }
+
+    private static void parsePacketData(Activity activity, String JSON) throws JSONException {
+        List<Packet> returnList = new ArrayList<>();
+        Log.v("PATOS_LOG", "Returned JSON: " + JSON);
+
+        JSONObject jsonData = new JSONObject(JSON);
+
+        JSONArray records = jsonData.getJSONArray("data");
+
+        for(int i = 0; i< records.length();i++){
+            JSONObject jo = records.getJSONObject(i);
+            Packet p = new Packet();
+            p.car = new Car(jo.getString("carID"));
+            p.ID = jo.getString("_id");
+            p.weight = jo.getDouble("packet");
+            returnList.add(p);
+        }
+        Data.allPackets.clear();
+        Data.allPackets = returnList;
+        Intent intent = new Intent(activity,MyPackets.class);
+        activity.startActivity(intent);
+
     }
 
     private static void updateCarPacket(final Activity activity, final String carID, final String userID, final double packageKG){
@@ -85,6 +240,7 @@ public class Server {
                 params.put("carID", carID); //Add the data you'd like to send to the foter.com.httppost.server.
                 params.put("userID", userID); //Add the data you'd like to send to the foter.com.httppost.server.
                 params.put("packageKG", packageKG + "");
+                Log.v("PATOS_LOG", "CAR: " + carID + ", USER: " + userID + ", PacketKG: " + packageKG);
                 return params;
             }
 
@@ -116,7 +272,6 @@ public class Server {
     }
 
     private static void processPacketResult(Activity activity, String response) throws JSONException {
-        Log.v("PATOS_LOG", "Response: " + response);
         JSONObject JSONresponse = new JSONObject(response);
         int responseStatus = JSONresponse.getInt("code");
         if(responseStatus == 0){
@@ -131,6 +286,7 @@ public class Server {
     private static void processCarResult(String response, Double kg,
                                          double deperatureLat, double deperatureLon,
                                          double arrivalLat, double arrivalLon){
+        List<Car> returnList = new ArrayList<>();
         List<Car> availableCars = null;
         try {
             availableCars = parseCars(response);
@@ -146,14 +302,13 @@ public class Server {
 
                 totalDistances.put(deperatureDistance + arrivalDistance, car.get_id());
             }
-            Log.v("PATOS2",totalDistances.size()+"");
+            Log.v("PATOS_LOG",totalDistances.size()+"");
 
             for(Map.Entry<Double, String> carDetails : totalDistances.entrySet()){
-                if(carDetails.getKey() > Properties.maxDistance)
-                    break;
+
                 Car car = carsDictionary.get(carDetails.getValue());
                 if(car.get_weight_capacity() - car.get_c_weight() >= kg)
-                    availableCars.add(car);
+                    returnList.add(car);
             }
         } catch (JSONException | ParseException e) {
             e.printStackTrace();
@@ -161,9 +316,9 @@ public class Server {
 
         Log.v("PATOS_LOG", "KG: " + kg + "kg, Retrieved: " + response);
 
-        AvailableCars.availableCars = availableCars;
-        Data.allCars = availableCars;
-        Log.v("PATOS", availableCars.size() + "");
+        AvailableCars.availableCars = returnList;
+        Data.allCars = returnList;
+        Log.v("PATOS_LOG", availableCars.size() + "");
         Intent availableCarPage = new Intent(_context, AvailableCars.class);
         availableCarPage.putExtra("kg", kg);
         _context.startActivity(availableCarPage);
@@ -208,7 +363,6 @@ public class Server {
                 {
                     @Override
                     public void onResponse(String response) {
-                        Log.v("PATOS_LOG", "Response: " + response);
                         processCarResult(response, kg, deperatureLat, deperatureLon,arrivalLat,arrivalLon);
                     }
                 },

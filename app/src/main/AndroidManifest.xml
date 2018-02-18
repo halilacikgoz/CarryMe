@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RequestPage"
+        <activity android:name=".view.RequestPage"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AvailableCars"
+        <activity android:name=".view.AvailableCars"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <meta-data
@@ -31,9 +31,9 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".PacketLocationPage"
+            android:name=".view.PacketLocationPage"
             android:label="@string/title_activity_packet_location_page" />
-        <activity android:name=".MyPackets"></activity>
+        <activity android:name=".view.MyPackets"></activity>
     </application>
 
 </manifest>

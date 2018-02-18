@@ -1,9 +1,9 @@
-package com.patos.carryme.remote;
+package com.patos.carryme.controller;
 
 import android.util.Log;
 
-import com.patos.carryme.objects.Car;
-import com.patos.carryme.objects.singletons.Calculator;
+import com.patos.carryme.model.Car;
+import com.patos.carryme.model.singletons.Calculator;
 import com.patos.carryme.test.Data;
 import com.patos.carryme.test.Preparer;
 import com.patos.carryme.test.Properties;

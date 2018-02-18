@@ -1,6 +1,6 @@
 package com.patos.carryme.test;
 
-import com.patos.carryme.objects.Car;
+import com.patos.carryme.model.Car;
 
 import java.util.ArrayList;
 import java.util.List;
